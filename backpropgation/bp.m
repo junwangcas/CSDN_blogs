@@ -3,6 +3,7 @@ w = [0.1,0.1,0.1,0.1];
 w_list = w;
 L_list = [];
 i = 0;
+
 while i < 100
 dL_w = [0, 0, 0, 0];
 [a(2), a(3), a(4), L] = forwardprop(a(1), w(1), w(2), w(3),w(4));
