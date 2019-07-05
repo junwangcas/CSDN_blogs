@@ -1,0 +1,56 @@
+function [ output_args ] = Generate_Data( input_args )
+%  输入：
+%　输出：生成机器人位置，地标点，观测数据
+radius = 2;
+theta_delta = 0.1;
+
+landmarks = [];
+poses = [];
+observations = [];
+
+%% generate landmarks;
+theta = 0;
+while (theta < 2*pi)
+    x = radius * cos(theta);
+    y = radius * sin(theta);
+    landmarks = cat(1, landmarks, [x,y]);
+    theta = theta + theta_delta;
+end
+%% generate poses;
+theta = theta_delta;
+while (theta < 2*pi + theta_delta)
+    x = 3.0/4.0*radius * cos(theta);
+    y = 3.0/4.0*radius * sin(theta);
+    poses = cat(1, poses, [x,y]);
+    theta = theta + theta_delta;
+end
+
+%% generate observations;
+size_pose = size(poses,1);
+size_landmark = size(landmarks,1);
+% 在每一个位置上，观察到三个ｌａｎｄｍａｒｋ
+id_pose = 0;
+id_landmark = 0;
+observations_matrix = zeros(size_pose, size_landmark);
+for (id_pose < size_pose)
+    num_obsv = 3;
+    id_obsv = 0;
+    while (id_obsv < num_obsv)
+        id_obsv = id_obsv + 1;
+        if (id_landmark >= size_landmark)
+            id_landmark = id_landmark - size_landmark;
+        end
+        pose = poses(id_pose,:);
+        landmark = landmarks(id_landmark,:);
+        ob
+    end
+end
+
+
+%% plot
+scatter(landmarks(:,1),landmarks(:,2));
+hold on; scatter(poses(:,1),poses(:,2));
+legend('landmarks','poses');
+axis('equal');
+end
+
