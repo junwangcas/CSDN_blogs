@@ -2,7 +2,7 @@ import numpy as np
 from gate import MultiplyGate, AddGate
 from output import Softmax
 from layer import Tanh
-
+from nn_log import nn_log_instance
 
 class Model:
     def __init__(self, layers_dim):
@@ -68,6 +68,12 @@ class Model:
                 # Gradient descent parameter update
                 self.b[i-1] += -epsilon * db
                 self.W[i-1] += -epsilon * dW
+
+            # write log
+            nn_log_instance.w = self.W
+            nn_log_instance.b = self.b
+            nn_log_instance.forward = forward
+            nn_log_instance.write_log()
 
             if print_loss and epoch % 1000 == 0:
                 print("Loss after iteration %i: %f" %(epoch, self.calculate_loss(X, y)))
