@@ -1,14 +1,10 @@
 import numpy
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 
 x = numpy.arange(10)
 y = numpy.array([5,3,4,2,7,5,4,6,3,2])
-
-fig = pyplot.figure()
-ax = fig.add_subplot(111)
-ax.set_ylim(0,10)
-pyplot.plot(x,y)
-for i,j in zip(x,y):
-    ax.annotate(str(j),xy=(i,j))
-
-pyplot.show()
+for i in range(10):
+    plt.subplot(2,1,1)
+    plt.show(block=False)
+    print(i)
+    plt.pause(0.1)
