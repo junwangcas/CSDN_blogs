@@ -1,18 +1,20 @@
+from datetime import datetime
 import numpy as np
 from callayer import RNNLayer
 from caloutput import Softmax
+import sys
 
 class Model:
     def __init__(self, word_dim=8, hidden_dim=40, bptt_truncate=8):
-        word_dim = 2
-        hidden_dim = 40
-        bptt_truncate = 8
+        word_dim = 2 # 字典这里就是采用01
+        hidden_dim = 16 # 隐含层维度；
+        bptt_truncate = 18
         self.word_dim = word_dim
         self.hidden_dim = hidden_dim
         self.bptt_truncate = bptt_truncate
-        self.U = np.random.uniform(-np.sqrt(1. / word_dim), np.sqrt(1. / word_dim), (hidden_dim, word_dim))
-        self.W = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (hidden_dim, hidden_dim))
-        self.V = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (word_dim, hidden_dim))
+        self.U = np.random.uniform(-np.sqrt(1. / word_dim), np.sqrt(1. / word_dim), (hidden_dim, word_dim)) # U 16*8
+        self.W = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (hidden_dim, hidden_dim)) # W 16*16
+        self.V = np.random.uniform(-np.sqrt(1. / hidden_dim), np.sqrt(1. / hidden_dim), (word_dim, hidden_dim)) # V 8*16
     '''
         forward propagation (predicting word probabilities)
         x is one single data, and a batch of data
@@ -20,14 +22,17 @@ class Model:
     '''
     def forward_propagation(self, x):
         # The total number of time steps
-        T = len(x)
+        # 假设　x = np.zeros(2, 8)
+        T = x.shape[1]
         layers = []
         prev_s = np.zeros(self.hidden_dim)
         # For each time step...
         for t in range(T):
             layer = RNNLayer()
             input = np.zeros(self.word_dim)
-            input[x[t]] = 1
+            # change
+            #input[x[t]] = 1
+            input = x[t]
             layer.forward(input, prev_s, self.U, self.W, self.V)
             prev_s = layer.s
             layers.append(layer)
