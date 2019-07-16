@@ -29,6 +29,7 @@ class Model:
             layer = RNNLayer()
             input = np.zeros(self.word_dim)
             input[x[t]] = 1
+            input = x[t]
             layer.forward(input, prev_s, self.U, self.W, self.V)
             prev_s = layer.s
             layers.append(layer)
@@ -69,12 +70,14 @@ class Model:
             dmulv = output.diff(layers[t].mulv, y[t])
             input = np.zeros(self.word_dim)
             input[x[t]] = 1
+            input = x[t]
             dprev_s, dU_t, dW_t, dV_t = layers[t].backward(input, prev_s_t, self.U, self.W, self.V, diff_s, dmulv)
             prev_s_t = layers[t].s
             dmulv = np.zeros(self.word_dim)
             for i in range(t-1, max(-1, t-self.bptt_truncate-1), -1):
                 input = np.zeros(self.word_dim)
                 input[x[i]] = 1
+                input = x[i]
                 prev_s_i = np.zeros(self.hidden_dim) if i == 0 else layers[i-1].s
                 dprev_s, dU_i, dW_i, dV_i = layers[i].backward(input, prev_s_i, self.U, self.W, self.V, dprev_s, dmulv)
                 dU_t += dU_i

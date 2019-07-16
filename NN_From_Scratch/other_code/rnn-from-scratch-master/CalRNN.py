@@ -6,9 +6,9 @@ import sys
 
 class Model:
     def __init__(self, word_dim=8, hidden_dim=40, bptt_truncate=8):
-        word_dim = 2 # 字典这里就是采用01
+        word_dim = 2 # [0 0 0 0 0 0 0 1] + [0 0 0 0 0 0 0 1] = []
         hidden_dim = 16 # 隐含层维度；
-        bptt_truncate = 18
+        bptt_truncate = 2
         self.word_dim = word_dim
         self.hidden_dim = hidden_dim
         self.bptt_truncate = bptt_truncate
@@ -23,7 +23,7 @@ class Model:
     def forward_propagation(self, x):
         # The total number of time steps
         # 假设　x = np.zeros(2, 8)
-        T = x.shape[1]
+        T = x.shape[0]
         layers = []
         prev_s = np.zeros(self.hidden_dim)
         # For each time step...
@@ -73,12 +73,15 @@ class Model:
             dmulv = output.diff(layers[t].mulv, y[t])
             input = np.zeros(self.word_dim)
             input[x[t]] = 1
+            # change to additional case;
+            input = x[t]
             dprev_s, dU_t, dW_t, dV_t = layers[t].backward(input, prev_s_t, self.U, self.W, self.V, diff_s, dmulv)
             prev_s_t = layers[t].s
             dmulv = np.zeros(self.word_dim)
             for i in range(t-1, max(-1, t-self.bptt_truncate-1), -1):
                 input = np.zeros(self.word_dim)
                 input[x[i]] = 1
+                input = x[i]
                 prev_s_i = np.zeros(self.hidden_dim) if i == 0 else layers[i-1].s
                 dprev_s, dU_i, dW_i, dV_i = layers[i].backward(input, prev_s_i, self.U, self.W, self.V, dprev_s, dmulv)
                 dU_t += dU_i
